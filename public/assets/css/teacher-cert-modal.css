@@ -1,0 +1,56 @@
+/* Modal Styles */
+.modal-header.bg-purple {
+    background-color: #6c4298;
+}
+
+.certificate-details .detail-item small {
+    color: #6c757d;
+    font-size: 0.875rem;
+}
+
+.certificate-details .detail-item strong,
+.certificate-details .detail-item p {
+    color: #333;
+}
+
+.certificate-preview {
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    min-height: 500px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.certificate-preview img {
+    max-height: 500px;
+    object-fit: contain;
+}
+
+.review-btn {
+    transition: all 0.3s ease;
+}
+
+.review-btn:hover {
+    transform: translateY(-2px);
+}
+
+#downloadCertificate {
+    background-color: #6c4298;
+    border-color: #6c4298;
+}
+
+#downloadCertificate:hover {
+    background-color: #563486;
+    border-color: #563486;
+}
+
+.modal-content {
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+}
+
+.card {
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}

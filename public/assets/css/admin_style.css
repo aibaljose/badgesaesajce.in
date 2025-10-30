@@ -1,0 +1,307 @@
+.modal-loader-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius:16px;
+    backdrop-filter: blur(5px);
+    background-color: rgba(255, 255, 255, 0.3); /* Light blur */
+    display: flex;
+    align-items: center; /* Center content vertically */
+    justify-content: center; /* Center content horizontally */
+    flex-direction: column; /* Stack spinner and text vertically */
+    padding-top: 50px; /* Optional: To adjust spinner position */
+    z-index: 1051; /* Just above Bootstrap modal */
+}
+
+.spinner {
+    border: 6px solid #f3f3f3;
+    border-top: 6px solid #007bff;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0%   { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loader-text {
+    margin-top: 15px; /* Space between loader and text */
+    font-size: 16px;
+    color: #007bff; /* You can change the color of the text */
+    font-weight: bold;
+    text-align: center;
+}
+
+.table th, .table td {
+    vertical-align: middle;
+    font-size: 0.9rem;
+}
+
+.badge {
+    padding: 5px 10px;
+    font-size: 0.75rem;
+    border-radius: 10px;
+}
+
+.badge-warning {
+    background-color: #ffbb33;
+    color: #fff;
+}
+
+.badge-success {
+    background-color: #2dce89;
+    color: #fff;
+}
+
+.badge-danger {
+    background-color: #f5365c;
+    color: #fff;
+}
+
+/* Badge shapes */
+.badge.circle {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-color, #3498db), var(--secondary-color, #2c3e50));
+}
+.badge.hexagon {
+    width: 200px;
+    height: 230px;
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    background: linear-gradient(135deg, var(--primary-color, #3498db), var(--secondary-color, #2c3e50));
+}
+.badge.shield {
+    width: 180px;
+    height: 240px;
+    clip-path: polygon(50% 0%, 100% 0%, 100% 75%, 50% 100%, 0% 75%, 0% 0%);
+    background: linear-gradient(135deg, var(--primary-color, #3498db), var(--secondary-color, #2c3e50));
+}
+.badge.ribbon {
+    width: 220px;
+    height: 260px;
+    clip-path: polygon(50% 0%, 85% 15%, 100% 50%, 85% 85%, 50% 100%, 15% 85%, 0% 50%, 15% 15%);
+    background: linear-gradient(135deg, var(--primary-color, #3498db), var(--secondary-color, #2c3e50));
+}
+
+/* Main layout */
+.main-content {
+    padding: 2rem;
+    background: #f8f9fa;
+}
+
+/* Header section */
+.page-header {
+    margin-bottom: 2rem;
+}
+
+.page-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+}
+
+/* Badge grid layout */
+.badges-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    padding: 0.5rem;
+}
+
+/* Badge Card Container */
+#badgesList {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+    padding: 1rem;
+}
+
+/* Badge Card */
+.badge-card {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    overflow: hidden;
+    position: relative;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.badge-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+/* Status Indicator */
+.badge-status-indicator {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.675rem;
+    font-weight: 500;
+    z-index: 1;
+}
+
+.status-active {
+    background-color: rgba(46, 125, 50, 0.1);
+    color: #2e7d32;
+}
+
+.status-inactive {
+    background-color: rgba(158, 158, 158, 0.1);
+    color: #757575;
+}
+
+/* Badge Display Area */
+.badge-display {
+    padding: 1.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f8f9fa;
+    min-height: 180px;
+}
+
+/* Badge Image Styles */
+.badge-image {
+    max-width: 170px;
+    height: auto;
+    object-fit: contain;
+}
+
+/* Badge Info Section */
+.badge-info {
+    padding: 1rem;
+    border-top: 1px solid #f0f0f0;
+}
+
+.badge-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+}
+
+.recipient-type {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.813rem;
+    color: #64748b;
+}
+
+.recipient-type i {
+    font-size: 0.75rem;
+    color: #94a3b8;
+}
+
+/* Badge Actions */
+.badge-actions {
+    padding: 1rem;
+    border-top: 1px solid #f0f0f0;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.action-button {
+    padding: 0.5rem 1rem;
+    font-size: 0.813rem;
+    color: #475569;
+    background-color: #f1f5f9;
+    border: none;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.2s ease;
+}
+
+.action-button:hover {
+    background-color: #e2e8f0;
+    color: #1e293b;
+}
+
+.action-button i {
+    font-size: 0.75rem;
+}
+
+/* Badge Shape Styles */
+.badge {
+    width: 120px;
+    height: 120px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.badge-content {
+    text-align: center;
+    color: white;
+    z-index: 1;
+}
+
+.badge-icon {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.badge-name {
+    font-size: 0.75rem;
+    font-weight: 500;
+    opacity: 0.9;
+}
+
+/* Create badge button */
+.create-badge-btn {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border-radius: 8px;
+    background: #2e7d32;
+    color: white;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.2s ease;
+}
+
+.create-badge-btn:hover {
+    background: #1b5e20;
+    transform: translateY(-1px);
+}
+
+.create-badge-btn i {
+    font-size: 0.875rem;
+}
+
+/* Fallback Badge Shape Styles */
+.badge.hexagon {
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    background: linear-gradient(145deg, var(--primary-color), var(--secondary-color));
+}
+
+.badge.circle {
+    border-radius: 50%;
+    background: linear-gradient(145deg, var(--primary-color), var(--secondary-color));
+}
+
+.badge.shield {
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    background: linear-gradient(145deg, var(--primary-color), var(--secondary-color));
+}
+
+.badge.octagon {
+    clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%);
+    background: linear-gradient(145deg, var(--primary-color), var(--secondary-color));
+}
+
