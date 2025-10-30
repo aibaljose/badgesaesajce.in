@@ -125,7 +125,7 @@ $currentPage = 'home';
 .no-style-link:hover {
   color: inherit; 
 }
-        }
+        
 
         .header h1 {
             font-size: 1.5rem;

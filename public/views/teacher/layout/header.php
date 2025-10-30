@@ -1,3 +1,22 @@
+<?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+
+// Initialize API Methods to get auth user
+require_once $_SERVER['DOCUMENT_ROOT'] . '/api_services/APIMethods.php';
+$api = new APIMethods();
+$authUser = $api->authUser();
+// echo json_encode($authUser);
+
+if (!$authUser || !$authUser['status']) {
+    // Redirect to login if not authenticated
+    header('Location: /login');
+    exit;
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,15 +30,14 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-
-    <script>
-        // Only declare if not already defined
+<script>
+        // Pass authenticated user data to JavaScript
         if (typeof window.__authUser === 'undefined') {
-            window.__authUser = <?php echo json_encode(__authUser); ?>;
+            window.__authUser = <?php echo json_encode($authUser); ?>;
+            console.log(__authUser);
         }
-    </script>
-    <?php $user = __authUser; ?>
-    
+</script>
+    <!-- 
     <style>
     /* Compact navbar and responsive sidebar support */
     .navbar { padding: .35rem 0.75rem; }
@@ -48,7 +66,6 @@
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <!-- Small-screen sidebar toggle -->
         <button id="sidebarToggle" class="d-lg-none btn btn-link text-white ms-2 p-0" title="Toggle sidebar">
             <i class="fas fa-bars"></i>
         </button>
@@ -82,4 +99,37 @@
 </nav>
 
 </body>
-</html>
+</html> -->
+   <header class=" position-fixed w-100 py-1 mb-3" style="top: 0; z-index: 1050;background-color:white; color: black;height:60px;">
+   <div class="container-fluid px-3 py-2">
+       <div class="d-flex justify-content-between align-items-center">
+           <!-- Left Section -->
+           <div class="d-flex align-items-center">
+               <!-- Sidebar toggle button intentionally removed; stray closing tag fixed -->
+               <h1 class="h4 fw-bold mb-0"></h1>
+               <img src="https://jobs.amaljyothi.ac.in/public/assets/img/logo/ajce-logo.png" style="height:40px;">
+           </div>
+           
+            <!-- Right Section -->
+           <div class="dropdown position-static">
+               <button class="btn dropdown-toggle d-flex align-items-center border-0 shadow-none" type="button" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false" id="profileDropdown">
+                   <div class="me-2 me-md-2">
+                       <img src="<?php echo htmlspecialchars($authUser['staff_photo'] ?? ''); ?>" 
+                            alt="User Avatar" 
+                            class="rounded-circle" 
+                            style="width: 32px; height: 32px; object-fit: cover;">
+                   </div>
+                   <span class=" small fw-medium me-1 d-none d-md-inline">
+                       <?php echo htmlspecialchars($authUser['staff_name'] ?? 'User'); ?>
+                   </span>
+               </button>
+               <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="profileDropdown" style="z-index: 2000;">
+                   <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Profile</a></li>
+                   <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Settings</a></li>
+                   <li><hr class="dropdown-divider"></li>
+                   <li><a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+               </ul>
+           </div>
+       </div>
+   </div>
+</header>

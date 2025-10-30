@@ -41,7 +41,7 @@
     
     /* Sidebar container */
 .sidebar {
-  width: 280px;
+    width: 260px;
   background: #fff;
 
   box-shadow: 0 2px 12px rgba(0,0,0,0.1);
@@ -132,6 +132,12 @@
       padding: 10px 16px;
 }
 
+/* Mobile off-canvas fallback (kept here in case footer styles are not loaded) */
+@media (max-width: 768px) {
+    .sidebar { transform: translateX(-100%); transition: transform .28s ease; }
+    .sidebar.active { transform: translateX(0); }
+}
+
     
 </style>
 
@@ -147,21 +153,21 @@
                <img src="https://jobs.amaljyothi.ac.in/public/assets/img/logo/ajce-logo.png" style="height:60px;">
             </a>
         <nav class="sidebar-content">
-            <a href="/" class="nav-item ">
+            <a href="/teacher" class="nav-item ">
                 <i class="fas fa-home"></i>
                 <span>Home</span>
             </a>
-            <a href="/badges" class="nav-item">
+            <a href="/certificate-view/" class="nav-item">
                 <i class="fas fa-award"></i>
-                <span>Badges</span>
+                <span>Student Certificates</span>
             </a>
             <a href="/view_certificates" class="nav-item">
                 <i class="fas fa-certificate"></i>
-                <span>Certificates</span>
+                <span>Badges Management</span>
             </a>
             <a href="/upload_certificate" class="nav-item">
                 <i class="fas fa-cloud-upload-alt"></i>
-                <span>Upload Certificates</span>
+                <span>Upload Badges</span>
             </a>
             <a href="/profile" class="nav-item">
                 <i class="fas fa-user"></i>

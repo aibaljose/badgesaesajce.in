@@ -51,11 +51,11 @@ class APIMethods
             return [];
         }
     }
-    
-    
-    
-function getLoginSession()
-{
+
+
+
+    function getLoginSession()
+    {
 
         if (isset($_SESSION['auth_user']['checksum'])) {
             $_encKey = substr($_SESSION['auth_user']['checksum'], -40);
@@ -66,8 +66,7 @@ function getLoginSession()
         } else {
             return [];
         }
-    
-}
+    }
 
 
     function authUser()
@@ -76,13 +75,13 @@ function getLoginSession()
     }
     function setAuthUser($_params)
     {
-        
-      $_SESSION['auth_user'] = $_params;
-      
+
+        $_SESSION['auth_user'] = $_params;
+
         // if ($_params[role] == "staff") {
 
         //     $_SESSION['auth_user'] = $_params;
-            
+
         // }
 
         // if (_params[role] == "student") {
@@ -100,7 +99,7 @@ function getLoginSession()
         //         }
         //     }
         //     $_SESSION['auth_user']=getLoginPost();
-            
+
         // }
     }
     function isAuthUser($_params)
@@ -155,40 +154,40 @@ function getLoginSession()
             'data' => $resp
         ];
     }
-    
-    
-        function badgeClassStudentsInfo1($params)
+
+
+    function badgeClassStudentsInfo1($params)
     {
-        
-        $mainuser =getLoginSession();
 
-       $url = "https://api.aesajce.in";
+        $mainuser = getLoginSession();
 
-$curl = curl_init($url);
-curl_setopt($curl, CURLOPT_URL, $url);
-curl_setopt($curl, CURLOPT_POST, true);
-curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        $url = "https://api.aesajce.in";
 
-$headers = array(
-   "Origin: https://badges.aesajce.in",
-   "Content-Type: application/x-www-form-urlencoded",
-);
-curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+        $curl = curl_init($url);
+        curl_setopt($curl, CURLOPT_URL, $url);
+        curl_setopt($curl, CURLOPT_POST, true);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 
-$data = "method=badgeClassStudentsInfo&scode={$mainuser['staff_code']}";
+        $headers = array(
+            "Origin: https://badges.aesajce.in",
+            "Content-Type: application/x-www-form-urlencoded",
+        );
+        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
 
-curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+        $data = "method=badgeClassStudentsInfo&scode={$mainuser['staff_code']}";
 
-//for debug only!
-curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
-curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
 
-$resp = curl_exec($curl);
-curl_close($curl);
+        //for debug only!
+        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
 
-//   echo '<pre>';
-//                      print_r($resp);
-//                     echo '</pre>';
+        $resp = curl_exec($curl);
+        curl_close($curl);
+
+        //   echo '<pre>';
+        //                      print_r($resp);
+        //                     echo '</pre>';
 
 
         return [
@@ -228,7 +227,7 @@ curl_close($curl);
 
 
         return [
-          $resp
+            $resp
         ];
     }
 
@@ -392,133 +391,133 @@ curl_close($curl);
         }
     }
 
-//     public function getTeacherCertificates($data)
-//     {
-//         try {
-//             $students=[];
-//             $staff=getLoginSession();
-//   $response = $this->badgeClassStudentsInfo1(1317);
+    //     public function getTeacherCertificates($data)
+    //     {
+    //         try {
+    //             $students=[];
+    //             $staff=getLoginSession();
+    //   $response = $this->badgeClassStudentsInfo1(1317);
 
-// // First, decode the "data" string inside the response
-// if ($response['status'] && isset($response['data'])) {
-//     $data = json_decode($response['data'], true);  // <- decode the inner JSON
+    // // First, decode the "data" string inside the response
+    // if ($response['status'] && isset($response['data'])) {
+    //     $data = json_decode($response['data'], true);  // <- decode the inner JSON
 
-//     if (isset($data['students']) && is_array($data['students'])) {
-//         $admissionNumbers = array_column($data['students'], 'admissionno');
-// //         return ['status' => true, 'data' => $admissionNumbers];
-//      } else {
-//       return ['status' => false, 'message' => 'Decoded data missing students array'];
-// //     }
-// } }else {
-//   return ['status' => false, 'message' => 'Invalid response from badgeClassStudentsInfo1'];
-//  }
+    //     if (isset($data['students']) && is_array($data['students'])) {
+    //         $admissionNumbers = array_column($data['students'], 'admissionno');
+    // //         return ['status' => true, 'data' => $admissionNumbers];
+    //      } else {
+    //       return ['status' => false, 'message' => 'Decoded data missing students array'];
+    // //     }
+    // } }else {
+    //   return ['status' => false, 'message' => 'Invalid response from badgeClassStudentsInfo1'];
+    //  }
 
-//     $placeholders = implode(',', array_fill(0, count($admissionNumbers), '?'));
-
-
-            
-            
-            
-            
-            
-            
-//               $query = "
-//         SELECT *
-//         FROM badges_certificate_list
-//         WHERE student_id IN ($placeholders)
-//         ORDER BY created_at DESC
-//     ";
-
-//             $params = [];
-
-//             if (!empty($data['status'])) {
-//                 $query .= " AND status = :status";
-//                 $params[':status'] = $data['status'];
-//             }
-
-//             if (!empty($data['search'])) {
-//                 $query .= " AND certification_title LIKE :search";
-//                 $params[':search'] = "%{$data['search']}%";
-//             }
-
-//             $query .= " ORDER BY created_at DESC";
-
-//             $stmt = $this->pdo->prepare($query);
-//             $stmt->execute($admissionNumbers);
-
-//             return array(
-//                 "status" => true,
-//                 "data" => $stmt->fetchAll(PDO::FETCH_ASSOC)
-//             );
-//         } catch (Exception $e) {
-//             return array(
-//                 "status" => false,
-//                 "message" => $e->getMessage()
-//             );
-//         }
-//     }
+    //     $placeholders = implode(',', array_fill(0, count($admissionNumbers), '?'));
 
 
 
 
-public function getTeacherCertificates($data)
-{
-    try {
-        $staff = getLoginSession();
-        $response = $this->badgeClassStudentsInfo1(1317);
 
-        if ($response['status'] && isset($response['data'])) {
-            $decoded = json_decode($response['data'], true);
-            if (isset($decoded['students']) && is_array($decoded['students'])) {
-                $admissionNumbers = array_column($decoded['students'], 'admissionno');
+
+
+
+    //               $query = "
+    //         SELECT *
+    //         FROM badges_certificate_list
+    //         WHERE student_id IN ($placeholders)
+    //         ORDER BY created_at DESC
+    //     ";
+
+    //             $params = [];
+
+    //             if (!empty($data['status'])) {
+    //                 $query .= " AND status = :status";
+    //                 $params[':status'] = $data['status'];
+    //             }
+
+    //             if (!empty($data['search'])) {
+    //                 $query .= " AND certification_title LIKE :search";
+    //                 $params[':search'] = "%{$data['search']}%";
+    //             }
+
+    //             $query .= " ORDER BY created_at DESC";
+
+    //             $stmt = $this->pdo->prepare($query);
+    //             $stmt->execute($admissionNumbers);
+
+    //             return array(
+    //                 "status" => true,
+    //                 "data" => $stmt->fetchAll(PDO::FETCH_ASSOC)
+    //             );
+    //         } catch (Exception $e) {
+    //             return array(
+    //                 "status" => false,
+    //                 "message" => $e->getMessage()
+    //             );
+    //         }
+    //     }
+
+
+
+
+    public function getTeacherCertificates($data)
+    {
+        try {
+            $staff = getLoginSession();
+            $response = $this->badgeClassStudentsInfo1(1317);
+
+            if ($response['status'] && isset($response['data'])) {
+                $decoded = json_decode($response['data'], true);
+                if (isset($decoded['students']) && is_array($decoded['students'])) {
+                    $admissionNumbers = array_column($decoded['students'], 'admissionno');
+                } else {
+                    return ['status' => false, 'message' => 'Decoded data missing students array'];
+                }
             } else {
-                return ['status' => false, 'message' => 'Decoded data missing students array'];
+                return ['status' => false, 'message' => 'Invalid response from badgeClassStudentsInfo1'];
             }
-        } else {
-            return ['status' => false, 'message' => 'Invalid response from badgeClassStudentsInfo1'];
-        }
 
-        if (empty($admissionNumbers)) {
-            return ['status' => false, 'message' => 'No students found'];
-        }
+            if (empty($admissionNumbers)) {
+                return ['status' => false, 'message' => 'No students found'];
+            }
 
-        // Build placeholders for IN clause
-        $placeholders = implode(',', array_fill(0, count($admissionNumbers), '?'));
-        $query = "
+            // Build placeholders for IN clause
+            $placeholders = implode(',', array_fill(0, count($admissionNumbers), '?'));
+            $query = "
             SELECT *
             FROM badges_certificate_list
             WHERE student_id IN ($placeholders)
         ";
 
-        $params = $admissionNumbers;
+            $params = $admissionNumbers;
 
-        // Dynamic filters
-        if (!empty($data['status'])) {
-            $query .= " AND status = ?";
-            $params[] = $data['status'];
+            // Dynamic filters
+            if (!empty($data['status'])) {
+                $query .= " AND status = ?";
+                $params[] = $data['status'];
+            }
+
+            if (!empty($data['search'])) {
+                $query .= " AND certification_title LIKE ?";
+                $params[] = "%" . $data['search'] . "%";
+            }
+
+            $query .= " ORDER BY created_at DESC";
+
+            $stmt = $this->pdo->prepare($query);
+            $stmt->execute($params);
+
+            return [
+                "status" => true,
+                "data" => $stmt->fetchAll(PDO::FETCH_ASSOC)
+            ];
+        } catch (Exception $e) {
+            return [
+                "status" => false,
+                "message" => $e->getMessage()
+            ];
         }
-
-        if (!empty($data['search'])) {
-            $query .= " AND certification_title LIKE ?";
-            $params[] = "%" . $data['search'] . "%";
-        }
-
-        $query .= " ORDER BY created_at DESC";
-
-        $stmt = $this->pdo->prepare($query);
-        $stmt->execute($params);
-
-        return [
-            "status" => true,
-            "data" => $stmt->fetchAll(PDO::FETCH_ASSOC)
-        ];
-    } catch (Exception $e) {
-        return [
-            "status" => false,
-            "message" => $e->getMessage()
-        ];
     }
-}
 
 
 
@@ -591,48 +590,48 @@ public function getTeacherCertificates($data)
     //         return ['status' => false, 'message' => $e->getMessage()];
     //     }
     // }
-    
-    
-public function getStudentCertificateStats()
-{
-    try {
-        $studentId = $_SESSION['auth_user']['admission_no'] ?? null;
-        if (!$studentId) {
-            throw new Exception("Student not authenticated.");
-        }
 
-        // 1. Get status-wise certificate counts
-        $stmt = $this->pdo->prepare("
+
+    public function getStudentCertificateStats()
+    {
+        try {
+            $studentId = $_SESSION['auth_user']['admission_no'] ?? null;
+            if (!$studentId) {
+                throw new Exception("Student not authenticated.");
+            }
+
+            // 1. Get status-wise certificate counts
+            $stmt = $this->pdo->prepare("
             SELECT status, COUNT(*) as count
             FROM badges_certificate_list 
             WHERE student_id = :student_id
             GROUP BY status
         ");
-        $stmt->execute([':student_id' => $studentId]);
-        $db_counts = $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
+            $stmt->execute([':student_id' => $studentId]);
+            $db_counts = $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
 
-        $stats = ['approved' => 0, 'pending' => 0, 'rejected' => 0, 'reverted' => 0];
-        $finalStats = array_replace($stats, $db_counts);
-        $finalStats['total'] = array_sum($finalStats);
+            $stats = ['approved' => 0, 'pending' => 0, 'rejected' => 0, 'reverted' => 0];
+            $finalStats = array_replace($stats, $db_counts);
+            $finalStats['total'] = array_sum($finalStats);
 
-        // 2. Get count of assigned badges (i.e., assigned_badge_id is not null)
-        $badgeStmt = $this->pdo->prepare("
+            // 2. Get count of assigned badges (i.e., assigned_badge_id is not null)
+            $badgeStmt = $this->pdo->prepare("
             SELECT COUNT(*) 
             FROM badges_certificate_list 
             WHERE student_id = :student_id AND assigned_badge_id IS NOT NULL
         ");
-        $badgeStmt->execute([':student_id' => $studentId]);
-        $badgesCount = $badgeStmt->fetchColumn();
+            $badgeStmt->execute([':student_id' => $studentId]);
+            $badgesCount = $badgeStmt->fetchColumn();
 
-        // 3. Add badges count to the final stats
-        $finalStats['badges'] = (int)$badgesCount;
+            // 3. Add badges count to the final stats
+            $finalStats['badges'] = (int)$badgesCount;
 
-        return ['status' => true, 'data' => $finalStats];
-    } catch (Exception $e) {
-        error_log($e->getMessage());
-        return ['status' => false, 'message' => $e->getMessage()];
+            return ['status' => true, 'data' => $finalStats];
+        } catch (Exception $e) {
+            error_log($e->getMessage());
+            return ['status' => false, 'message' => $e->getMessage()];
+        }
     }
-}
 
 
 
@@ -718,89 +717,89 @@ public function getStudentCertificateStats()
             ];
         }
     }
-    
-    
-    
-    
-    
-// public function getStudentBadgeCategoryStats()
-// {
-//     try {
-//         if (!isset($_SESSION['auth_user']['checksum'])) {
-//             throw new Exception("No session checksum found.");
-//         }
-
-//         // Decrypt session checksum
-//         $checksum = $_SESSION['auth_user']['checksum'];
-//         $_encKey = substr($checksum, -40);
-//         $_encData = substr($checksum, 0, -40);
-//         $_encIV = substr(sha1($_encKey), -16);
-//         $decrypted = openssl_decrypt(base64_decode($_encData), "AES-256-CBC", $_encKey, 0, $_encIV);
-//         $user_data = json_decode($decrypted, true);
-
-//         if (!isset($user_data['username'])) {
-//             throw new Exception($user_data['username']);
-//         }
-
-//         $stmt = $this->pdo->prepare("
-//             SELECT 
-//     bc.id,
-//     bc.name,
-//     bc.icon_class,
-//     bc.created_by_staff_name,
-//     COUNT(*) AS badge_count
-// FROM 
-//     tbl_student_badges sb
-// JOIN 
-//     tbl_badge_list bl ON sb.badge_id = bl.badge_id
-// JOIN 
-//     tbl_badge_categories bc ON bl.badge_cate_id = bc.id
-// WHERE 
-//     sb.student_id = ?
-// GROUP BY 
-//     bc.id, bc.name, bc.icon_class, bc.created_by_staff_name
-// ORDER BY 
-//     badge_count DESC
-
-//         ");
-
-//         $stmt->execute([$user_data['stud_admno']]);
-//         $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-//         return [
-//             'status' => true,
-//             'data' => $categories
-//         ];
-//     } catch (Exception $e) {
-//         return [
-//             'status' => false,
-//             'message' => 'Failed to fetch badge categories: ' . $e->getMessage()
-//         ];
-//     }
-// }
 
 
 
-public function getStudentBadgeCategoryStats()
-{
-    try {
-        if (!isset($_SESSION['auth_user']['checksum'])) {
-            throw new Exception("No session checksum found.");
-        }
 
-        // Decrypt session checksum
-        $checksum = $_SESSION['auth_user']['checksum'];
-        $_encKey = substr($checksum, -40);
-        $_encData = substr($checksum, 0, -40);
-        $_encIV = substr(sha1($_encKey), -16);
-        $decrypted = openssl_decrypt(base64_decode($_encData), "AES-256-CBC", $_encKey, 0, $_encIV);
-        $user_data = json_decode($decrypted, true);
 
-        if (!$user_data['username']) {
-            throw new Exception("Student ID not found in session.");
-        }
+    // public function getStudentBadgeCategoryStats()
+    // {
+    //     try {
+    //         if (!isset($_SESSION['auth_user']['checksum'])) {
+    //             throw new Exception("No session checksum found.");
+    //         }
 
-        $stmt = $this->pdo->prepare("
+    //         // Decrypt session checksum
+    //         $checksum = $_SESSION['auth_user']['checksum'];
+    //         $_encKey = substr($checksum, -40);
+    //         $_encData = substr($checksum, 0, -40);
+    //         $_encIV = substr(sha1($_encKey), -16);
+    //         $decrypted = openssl_decrypt(base64_decode($_encData), "AES-256-CBC", $_encKey, 0, $_encIV);
+    //         $user_data = json_decode($decrypted, true);
+
+    //         if (!isset($user_data['username'])) {
+    //             throw new Exception($user_data['username']);
+    //         }
+
+    //         $stmt = $this->pdo->prepare("
+    //             SELECT 
+    //     bc.id,
+    //     bc.name,
+    //     bc.icon_class,
+    //     bc.created_by_staff_name,
+    //     COUNT(*) AS badge_count
+    // FROM 
+    //     tbl_student_badges sb
+    // JOIN 
+    //     tbl_badge_list bl ON sb.badge_id = bl.badge_id
+    // JOIN 
+    //     tbl_badge_categories bc ON bl.badge_cate_id = bc.id
+    // WHERE 
+    //     sb.student_id = ?
+    // GROUP BY 
+    //     bc.id, bc.name, bc.icon_class, bc.created_by_staff_name
+    // ORDER BY 
+    //     badge_count DESC
+
+    //         ");
+
+    //         $stmt->execute([$user_data['stud_admno']]);
+    //         $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    //         return [
+    //             'status' => true,
+    //             'data' => $categories
+    //         ];
+    //     } catch (Exception $e) {
+    //         return [
+    //             'status' => false,
+    //             'message' => 'Failed to fetch badge categories: ' . $e->getMessage()
+    //         ];
+    //     }
+    // }
+
+
+
+    public function getStudentBadgeCategoryStats()
+    {
+        try {
+            if (!isset($_SESSION['auth_user']['checksum'])) {
+                throw new Exception("No session checksum found.");
+            }
+
+            // Decrypt session checksum
+            $checksum = $_SESSION['auth_user']['checksum'];
+            $_encKey = substr($checksum, -40);
+            $_encData = substr($checksum, 0, -40);
+            $_encIV = substr(sha1($_encKey), -16);
+            $decrypted = openssl_decrypt(base64_decode($_encData), "AES-256-CBC", $_encKey, 0, $_encIV);
+            $user_data = json_decode($decrypted, true);
+
+            if (!$user_data['username']) {
+                throw new Exception("Student ID not found in session.");
+            }
+
+            $stmt = $this->pdo->prepare("
             SELECT 
                 bc.id AS category_id,
                 bc.name AS category_name,
@@ -820,34 +819,34 @@ public function getStudentBadgeCategoryStats()
                 badge_count DESC
         ");
 
-        $stmt->execute([$user_data['username']]);
-        $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $stmt->execute([$user_data['username']]);
+            $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        return [
-            'status' => true,
-            'data' => $categories
-        ];
-    } catch (Exception $e) {
-        return [
-            'status' => false,
-            'message' => 'Failed to fetch badge categories: ' . $e->getMessage()
-        ];
+            return [
+                'status' => true,
+                'data' => $categories
+            ];
+        } catch (Exception $e) {
+            return [
+                'status' => false,
+                'message' => 'Failed to fetch badge categories: ' . $e->getMessage()
+            ];
+        }
     }
-}
 
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1479,73 +1478,69 @@ public function getStudentBadgeCategoryStats()
             ];
         }
     }
-    
-    
-    
-    
-public function getTeacherStats()
-{
-    try {
-        $staff = getLoginSession(); // optional, if you want to log staff usage
 
-        // Get the students list (replace 1317 with dynamic class ID if needed)
-        $response = $this->badgeClassStudentsInfo1(1317);
 
-        if ($response['status'] && isset($response['data'])) {
-            $decoded = json_decode($response['data'], true);
-            if (isset($decoded['students']) && is_array($decoded['students'])) {
-                $admissionNumbers = array_column($decoded['students'], 'admissionno');
+
+
+    public function getTeacherStats()
+    {
+        try {
+            $staff = getLoginSession(); // optional, if you want to log staff usage
+
+            // Get the students list (replace 1317 with dynamic class ID if needed)
+            $response = $this->badgeClassStudentsInfo1(1317);
+
+            if ($response['status'] && isset($response['data'])) {
+                $decoded = json_decode($response['data'], true);
+                if (isset($decoded['students']) && is_array($decoded['students'])) {
+                    $admissionNumbers = array_column($decoded['students'], 'admissionno');
+                } else {
+                    return ['status' => false, 'message' => 'Decoded data missing students array'];
+                }
             } else {
-                return ['status' => false, 'message' => 'Decoded data missing students array'];
+                return ['status' => false, 'message' => 'Invalid response from badgeClassStudentsInfo1'];
             }
-        } else {
-            return ['status' => false, 'message' => 'Invalid response from badgeClassStudentsInfo1'];
-        }
 
-        if (empty($admissionNumbers)) {
-            return ['status' => false, 'message' => 'No students found'];
-        }
+            if (empty($admissionNumbers)) {
+                return ['status' => false, 'message' => 'No students found'];
+            }
 
-        // Build placeholders and execute
-        $placeholders = implode(',', array_fill(0, count($admissionNumbers), '?'));
+            // Build placeholders and execute
+            $placeholders = implode(',', array_fill(0, count($admissionNumbers), '?'));
 
-        $stmt = $this->pdo->prepare("
+            $stmt = $this->pdo->prepare("
             SELECT status, COUNT(*) as count
             FROM badges_certificate_list
             WHERE student_id IN ($placeholders)
             GROUP BY status
         ");
-        $stmt->execute($admissionNumbers);
-        $db_counts = $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
+            $stmt->execute($admissionNumbers);
+            $db_counts = $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
 
-        // Initialize with all possible statuses
-        $stats = [
-            'approved' => 0,
-            'pending' => 0,
-            'rejected' => 0,
-            'reverted' => 0,
-            'total' => 0
-        ];
+            // Initialize with all possible statuses
+            $stats = [
+                'approved' => 0,
+                'pending' => 0,
+                'rejected' => 0,
+                'reverted' => 0,
+                'total' => 0
+            ];
 
-        // Merge fetched counts into the initialized array
-        foreach ($db_counts as $status => $count) {
-            $stats[$status] = $count;
-            $stats['total'] += $count;
+            // Merge fetched counts into the initialized array
+            foreach ($db_counts as $status => $count) {
+                $stats[$status] = $count;
+                $stats['total'] += $count;
+            }
+
+            return [
+                'status' => true,
+                'data' => $stats
+            ];
+        } catch (Exception $e) {
+            return [
+                "status" => false,
+                "message" => $e->getMessage()
+            ];
         }
-
-        return [
-            'status' => true,
-            'data' => $stats
-        ];
-    } catch (Exception $e) {
-        return [
-            "status" => false,
-            "message" => $e->getMessage()
-        ];
     }
-}
-
-    
-    
-    
 }

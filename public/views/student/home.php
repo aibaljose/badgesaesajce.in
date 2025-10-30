@@ -2,7 +2,7 @@
 <script src="/public/assets/js/student/home.js"></script>
 <style>
     html{
-        text-decoration-none;
+        text-decoration: none;
     }
 </style>
 <main class="main-content">

@@ -21,7 +21,7 @@ function getLoginPost()
 
 function getLoginSession()
 {
-    if (__Auth) {
+    if (__authUser) {
         if (isset($_SESSION['auth_user']['checksum'])) {
             $_encKey = substr($_SESSION['auth_user']['checksum'], -40);
             $_encData = substr($_SESSION['auth_user']['checksum'], 0, -40);
@@ -37,7 +37,7 @@ function getLoginSession()
 
 
 route('/', function () {
-    if (__Auth) {
+    if (__authUser) {
         $main_user = getLoginSession();
         // return json_encode(['role' => $main_user['role']]);
         if ($main_user['role'] == "student") {
@@ -177,7 +177,7 @@ route('/', function () {
 
 
 
-                    if ($type==ct || $type==co) {
+                    if ($type=="ct" || $type=="co") {
                         require_once __DIR__ . '/public/views/teacher/layout/header.php';
                         require_once __DIR__ . '/public/views/student/layout/sidebar.php';
                         require_once __DIR__ . '/public/views/teacher/home.php';

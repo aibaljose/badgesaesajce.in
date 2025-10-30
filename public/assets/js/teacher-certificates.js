@@ -62,6 +62,7 @@ function loadCertificates() {
 
                     // Group certificates by student_id
                     const grouped = {};
+                    const studentCertsMap = {};
                     data.data.forEach(cert => {
                         if (!grouped[cert.student_id]) grouped[cert.student_id] = [];
                         grouped[cert.student_id].push(cert);
@@ -71,6 +72,7 @@ function loadCertificates() {
 
                     Object.keys(grouped).forEach(studentId => {
                         const certs = grouped[studentId];
+                        studentCertsMap[studentId] = certs;
                         const primaryCert = certs[0]; // Use first certificate for profile info
                         const studentName = `Student ${studentId}`; // You can replace with actual name if available
                         const mostRecentStatus = getMostRecentStatus(certs);
@@ -121,48 +123,12 @@ function loadCertificates() {
 
                                      
 
-                                        <!-- Certificates Dropdown -->
-                                        <div class="dropdown mb-3">
-                                            <button class="btn btn-outline-primary dropdown-toggle w-100 d-flex justify-content-between align-items-center" type="button" data-bs-toggle="dropdown" style="border-radius: 8px; padding: 10px 15px;">
+                                        <!-- Certificates Modal Trigger -->
+                                        <div class="mb-3">
+                                            <button class="btn btn-outline-primary w-100 d-flex justify-content-between align-items-center open-cert-list" type="button" data-student-id="${studentId}" style="border-radius: 8px; padding: 10px 15px;">
                                                 <span><i class="fas fa-certificate me-2"></i>View All Certificates (${certs.length})</span>
+                                                <i class="fas fa-up-right-from-square ms-2 small"></i>
                                             </button>
-                                            <ul class="dropdown-menu w-100 shadow-lg" style="border-radius: 12px; border: none; max-height: 400px; overflow-y: auto;">
-                                                <li class="dropdown-header fw-bold text-primary">
-                                                    <i class="fas fa-list me-2"></i>Certificate List
-                                                </li>
-                                                <li><hr class="dropdown-divider"></li>
-                                                ${certs.map(cert => `
-                                                    <li>
-                                                        <div class="dropdown-item-text px-3 py-2" style="border-bottom: 1px solid #f1f5f9;">
-                                                            <div class="d-flex justify-content-between align-items-start">
-                                                                <div class="flex-grow-1">
-                                                                    <div class="fw-semibold text-dark mb-1" style="font-size: 13px;">${cert.certification_title}</div>
-                                                                    <div class="text-muted small">${cert.certification_mode}</div>
-                                                                    <div class="text-muted small">
-                                                                        <i class="fas fa-calendar me-1"></i>${formatDate(cert.created_at)}
-                                                                    </div>
-                                                                </div>
-                                                                <div class="ms-2">
-                                                                    <span class="badge ${getStatusBadgeClass(cert.status)}" style="font-size: 9px; padding: 3px 6px; border-radius: 10px;">
-                                                                        ${cert.status.toUpperCase()}
-                                                                    </span>
-                                                                </div>
-                                                            </div>
-                                                            <div class="d-flex gap-1 mt-2">
-                                                                <button class="btn btn-outline-primary btn-sm" style="font-size: 10px; padding: 2px 8px; border-radius: 4px;" onclick="viewCertificate('${cert.id}')">
-                                                                    <i class="fas fa-eye"></i>
-                                                                </button>
-                                                                <button class="btn btn-outline-success btn-sm" style="font-size: 10px; padding: 2px 8px; border-radius: 4px;" onclick="approveCertificate('${cert.id}')">
-                                                                    <i class="fas fa-check"></i>
-                                                                </button>
-                                                                <button class="btn btn-outline-danger btn-sm" style="font-size: 10px; padding: 2px 8px; border-radius: 4px;" onclick="declineCertificate('${cert.id}')">
-                                                                    <i class="fas fa-times"></i>
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                    </li>
-                                                `).join('')}
-                                            </ul>
                                         </div>
 
                                         <!-- Main Action Buttons -->
@@ -175,6 +141,22 @@ function loadCertificates() {
 
                     html += '</div>';
                     $('#certificatesList').html(html);
+                    // Expose per-student certs for modal rendering
+                    window.__studentCerts = studentCertsMap;
+
+                    // Modal open handler for certificate list (Bootstrap modal + HTML templates)
+                    $(document)
+                        .off('click.openCertList')
+                        .on('click.openCertList', '.open-cert-list', function(e){
+                            e.preventDefault();
+                            const studentId = $(this).data('studentId');
+                            const certs = (window.__studentCerts && window.__studentCerts[studentId]) || [];
+                            try {
+                                openStudentCertificatesModal(studentId, certs);
+                            } catch(err) {
+                                console.error('Modal open error', err);
+                            }
+                        });
                 }
             } catch (error) {
                 console.error('Error processing certificates:', error);
@@ -255,13 +237,101 @@ function viewCertificate(id) {
 }
 
 function approveCertificate(id) {
-    console.log('Approving certificate:', id);
-    // Add your approve logic here
+    if (!id) return;
+    // Fetch available badges first
+    $.ajax({
+        url: '/api',
+        type: 'POST',
+        dataType: 'json',
+        data: { method: 'getAvailableBadges' },
+        success: function(response) {
+            const res = typeof response === 'string' ? JSON.parse(response) : response;
+            if (!res || !res.status) {
+                Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to load badges', confirmButtonColor: '#6c4298' });
+                return;
+            }
+            const options = (res.data || []).map(b => `<option value="${b.badge_id}">${b.badge_name}</option>`).join('');
+            Swal.fire({
+                title: 'Approve Certificate',
+                html: `
+                    <div class="mb-2 text-start">
+                        <label class="form-label">Select badge to award</label>
+                        <select id="swalBadge" class="form-select">
+                            <option value="">Choose a badge...</option>
+                            ${options}
+                        </select>
+                    </div>
+                    <div class="text-start">
+                        <label class="form-label">Approval comment</label>
+                        <textarea id="swalComment" class="form-control" rows="3" placeholder="Add your comment..."></textarea>
+                    </div>
+                `,
+                showCancelButton: true,
+                confirmButtonText: 'Approve',
+                confirmButtonColor: '#6c4298',
+                preConfirm: () => {
+                    const badge = document.getElementById('swalBadge').value;
+                    const comment = document.getElementById('swalComment').value;
+                    if (!badge) { Swal.showValidationMessage('Please select a badge'); return false; }
+                    if (!comment.trim()) { Swal.showValidationMessage('Please provide a comment'); return false; }
+                    return { badge_id: badge, teacher_comment: comment };
+                }
+            }).then((r) => {
+                if (r.isConfirmed) {
+                    submitStatusUpdate(id, 'approve', r.value);
+                }
+            });
+        },
+        error: function(){
+            Swal.fire({ icon: 'error', title: 'Error', text: 'Unable to load badges', confirmButtonColor: '#6c4298' });
+        }
+    });
 }
 
 function declineCertificate(id) {
-    console.log('Declining certificate:', id);
-    // Add your decline logic here
+    if (!id) return;
+    Swal.fire({
+        title: 'Reject Certificate',
+        html: `
+            <div class="text-start">
+                <label class="form-label">Rejection reason</label>
+                <textarea id="swalReject" class="form-control" rows="3" placeholder="Please add the reason..."></textarea>
+            </div>
+        `,
+        showCancelButton: true,
+        confirmButtonText: 'Reject',
+        confirmButtonColor: '#dc3545',
+        preConfirm: () => {
+            const reason = document.getElementById('swalReject').value;
+            if (!reason.trim()) { Swal.showValidationMessage('Please provide a rejection reason'); return false; }
+            return { rejection_reason: reason, teacher_comment: reason };
+        }
+    }).then((r) => {
+        if (r.isConfirmed) submitStatusUpdate(id, 'reject', r.value);
+    });
+}
+
+function revertCertificate(id) {
+    if (!id) return;
+    Swal.fire({
+        title: 'Revert for Changes',
+        html: `
+            <div class="text-start">
+                <label class="form-label">Revert reason and suggestions</label>
+                <textarea id="swalRevert" class="form-control" rows="3" placeholder="Explain what needs to change..."></textarea>
+            </div>
+        `,
+        showCancelButton: true,
+        confirmButtonText: 'Revert',
+        confirmButtonColor: '#ffc107',
+        preConfirm: () => {
+            const reason = document.getElementById('swalRevert').value;
+            if (!reason.trim()) { Swal.showValidationMessage('Please provide a revert reason'); return false; }
+            return { revert_reason: reason, teacher_comment: reason };
+        }
+    }).then((r) => {
+        if (r.isConfirmed) submitStatusUpdate(id, 'revert', r.value);
+    });
 }
 
 function approveAllCertificates(studentId) {
@@ -272,6 +342,82 @@ function approveAllCertificates(studentId) {
 function declineAllCertificates(studentId) {
     console.log('Declining all certificates for student:', studentId);
     // Add your decline all logic here
+}
+// Open Bootstrap modal and render items using HTML templates defined in the page
+function openStudentCertificatesModal(studentId, certs) {
+    const modalEl = document.getElementById('studentCertificatesModal');
+    const titleEl = document.getElementById('studentCertificatesLabel');
+    const metaEl = document.getElementById('studentCertsMeta');
+    const containerEl = document.getElementById('studentCertsContainer');
+    const searchEl = document.getElementById('studentCertsSearch');
+    const itemTpl = document.getElementById('studentCertsItemTemplate');
+
+    if (!modalEl || !containerEl || !itemTpl) {
+        console.error('Student certificates modal/templates not found');
+        return;
+    }
+
+    // Set header
+    if (titleEl) titleEl.textContent = `Certificates - #${studentId}`;
+    if (metaEl) metaEl.textContent = `${certs.length} certificate(s)`;
+
+    // Render items
+    function render(list) {
+        containerEl.innerHTML = '';
+        if (!Array.isArray(list) || list.length === 0) {
+            const empty = document.createElement('div');
+            empty.className = 'text-center text-muted py-4';
+            empty.textContent = 'No certificates available';
+            containerEl.appendChild(empty);
+            return;
+        }
+        list.forEach(cert => {
+            const node = itemTpl.content.cloneNode(true);
+            const wrap = node.querySelector('.cert-item');
+            node.querySelector('.cert-title').textContent = cert.certification_title || 'Untitled';
+            node.querySelector('.cert-mode').textContent = cert.certification_mode || '—';
+            node.querySelector('.cert-date').innerHTML = `<i class="fas fa-calendar me-1"></i>${formatDate(cert.created_at)}`;
+            const statusEl = node.querySelector('.cert-status');
+            statusEl.className = `badge cert-status xsmall ${getStatusBadgeClass(cert.status)}`;
+            statusEl.textContent = (cert.status || '').toString().toUpperCase();
+
+            // Wire actions
+            node.querySelector('.cert-view').addEventListener('click', () => viewCertificate(cert.id));
+            node.querySelector('.cert-approve').addEventListener('click', () => approveCertificate(cert.id));
+            const revertBtn = node.querySelector('.cert-revert');
+            if (revertBtn) revertBtn.addEventListener('click', () => revertCertificate(cert.id));
+            node.querySelector('.cert-decline').addEventListener('click', () => declineCertificate(cert.id));
+
+            containerEl.appendChild(node);
+        });
+    }
+
+    render(certs);
+
+    // Simple search filter
+    if (searchEl) {
+        searchEl.value = '';
+        const handle = debounce(() => {
+            const q = searchEl.value.trim().toLowerCase();
+            if (!q) return render(certs);
+            const filtered = certs.filter(c =>
+                (c.certification_title || '').toLowerCase().includes(q) ||
+                (c.certification_mode || '').toLowerCase().includes(q)
+            );
+            render(filtered);
+        }, 200);
+        searchEl.oninput = handle;
+    }
+
+    // Show modal
+    if (window.bootstrap && bootstrap.Modal) {
+        const modal = bootstrap.Modal.getOrCreateInstance(modalEl, { backdrop: true });
+        modal.show();
+    } else {
+        // Minimal fallback
+        modalEl.style.display = 'block';
+        modalEl.classList.add('show');
+    }
 }
 function viewCertificate(certId) {
     if (!certId) {
@@ -356,19 +502,25 @@ function showCertificateModal(cert) {
             downloadLink.attr('href', cert.certification_file)
                       .removeClass('d-none');
             
-            // Set preview based on file type
+            // Set preview based on file type - use "open in new tab" instead of embedding
             if (['pdf', 'jpg', 'jpeg', 'png'].includes(fileExt)) {
-                if (fileExt === 'pdf') {
-                    $('.certificate-preview').html(`
-                        <embed src="${cert.certification_file}" type="application/pdf" width="100%" height="500px">
-                    `);
-                } else {
-                    $('.certificate-preview').html(`
-                        <img src="${cert.certification_file}" class="img-fluid" alt="Certificate">
-                    `);
-                }
+                $('.certificate-preview').html(`
+                    <div class="d-flex align-items-center gap-2">
+                        <a href="${cert.certification_file}" target="_blank" rel="noopener" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-external-link-alt me-1"></i> Open in new tab
+                        </a>
+                        <small class="text-muted">Preview disabled for performance and compatibility.</small>
+                    </div>
+                `);
             } else {
-                $('.certificate-preview').html('<p class="text-center">Unsupported file format</p>');
+                $('.certificate-preview').html(`
+                    <div class="d-flex align-items-center gap-2">
+                        <a href="${cert.certification_file}" target="_blank" rel="noopener" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-external-link-alt me-1"></i> Open in new tab
+                        </a>
+                        <small class="text-muted">Unsupported file format for preview.</small>
+                    </div>
+                `);
             }
         } else {
             $('.certificate-preview').html('<p class="text-center">No file available</p>');

@@ -9,6 +9,8 @@ session_start(); // ✅ Ensure session is started if needed for data access
 
 
 <style>
+    html, body { max-width: 100%; overflow-x: hidden; }
+    .content-wrapper, .main-container, .container-fluid { max-width: 100%; overflow-x: hidden; }
     body {
         background-color: #f4f5f7;
         font-family: 'Segoe UI', sans-serif;
@@ -107,7 +109,7 @@ session_start(); // ✅ Ensure session is started if needed for data access
     <?php include 'layout/sidebar.php'; ?>
 
     <div class="main-content">
-        <div class="container-fluid py-4">
+        <div class="container-fluid" style="padding-top: 5rem;">
 
             <div class="row g-4">
                 <!-- Pending Certificates -->
